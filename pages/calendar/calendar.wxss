@@ -1,0 +1,265 @@
+/** 日历页样式 **/
+
+.page-container {
+  min-height: 100vh;
+  padding: 30rpx;
+  box-sizing: border-box;
+  background: #FFF5F5;
+}
+
+/* 月份头部 */
+.month-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 10rpx 30rpx;
+}
+
+.month-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #333333;
+}
+
+.month-arrow {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  color: #FF6B81;
+  font-weight: 300;
+}
+
+/* 星期行 */
+.weekday-row {
+  display: flex;
+  margin-bottom: 10rpx;
+}
+
+.weekday-item {
+  flex: 1;
+  text-align: center;
+  font-size: 26rpx;
+  color: #999999;
+  padding: 12rpx 0;
+  font-weight: 500;
+}
+
+/* 日历网格 */
+.calendar-grid {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 20rpx rgba(255, 107, 129, 0.15);
+}
+
+.week-row {
+  display: flex;
+}
+
+.day-cell {
+  flex: 1;
+  height: 100rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.day-cell.empty {
+  background: transparent;
+}
+
+.day-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.day-num {
+  font-size: 28rpx;
+  color: #333333;
+  z-index: 1;
+}
+
+/* 今天 */
+.day-cell.today .day-num {
+  color: #FF6B81;
+  font-weight: 700;
+}
+
+.day-cell.today::after {
+  content: '';
+  position: absolute;
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  border: 3rpx solid #FF6B81;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 经期标记 */
+.period-mark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 107, 129, 0.25);
+  z-index: 0;
+}
+
+.predict-mark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 107, 129, 0.08);
+  border: 2rpx dashed rgba(255, 107, 129, 0.3);
+  z-index: 0;
+}
+
+.mark-dot {
+  position: absolute;
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: #FF6B81;
+  z-index: 2;
+}
+
+.mark-dot.start {
+  top: 6rpx;
+  left: 6rpx;
+}
+
+.mark-dot.end {
+  bottom: 6rpx;
+  right: 6rpx;
+  background: #FF8A80;
+}
+
+.predict-dot {
+  background: #FFB6C1;
+}
+
+/* 图例 */
+.legend {
+  display: flex;
+  justify-content: center;
+  margin-top: 30rpx;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  color: #999999;
+  margin-right: 40rpx;
+}
+
+.legend-item:last-child {
+  margin-right: 0;
+}
+
+.legend-color {
+  width: 28rpx;
+  height: 28rpx;
+  border-radius: 6rpx;
+  margin-right: 10rpx;
+}
+
+.period-color {
+  background: rgba(255, 107, 129, 0.3);
+}
+
+.predict-color {
+  background: rgba(255, 107, 129, 0.08);
+  border: 2rpx dashed rgba(255, 107, 129, 0.3);
+}
+
+/* 编辑弹窗 */
+.popup-hint {
+  font-size: 24rpx;
+  color: #999999;
+  text-align: center;
+  margin-bottom: 24rpx;
+  padding: 8rpx 20rpx;
+  background: #FFF5F5;
+  border-radius: 12rpx;
+  display: inline-block;
+  width: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.predict-hint {
+  background: rgba(255, 107, 129, 0.08);
+  color: #FF6B81;
+}
+
+.edit-actions {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24rpx;
+}
+
+.edit-actions .edit-btn {
+  margin-bottom: 16rpx;
+}
+
+.edit-actions .edit-btn:last-child {
+  margin-bottom: 0;
+}
+
+.edit-btn {
+  width: 100%;
+  height: 76rpx;
+  line-height: 76rpx;
+  background: #FFF5F5;
+  color: #FF6B81;
+  font-size: 28rpx;
+  border-radius: 16rpx;
+  border: none;
+  padding: 0;
+  text-align: center;
+}
+
+.edit-btn::after {
+  border: none;
+}
+
+.edit-btn-end {
+  background: #FFF0F0;
+  color: #FF8A80;
+}
+
+.edit-btn:active {
+  opacity: 0.8;
+}
+
+.popup-actions {
+  margin-top: 30rpx;
+}
+
+.btn-confirm {
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  padding: 0;
+  font-size: 28rpx;
+}
+
+.btn-confirm::after {
+  border: none;
+}

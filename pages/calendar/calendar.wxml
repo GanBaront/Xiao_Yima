@@ -1,0 +1,126 @@
+<!-- 日历页 -->
+<view class="page-container">
+
+  <!-- 月份切换 -->
+  <view class="month-header">
+    <view class="month-arrow" bindtap="prevMonth">‹</view>
+    <view class="month-title">{{currentYear}}年 {{currentMonth}}月</view>
+    <view class="month-arrow" bindtap="nextMonth">›</view>
+  </view>
+
+  <!-- 星期标题 -->
+  <view class="weekday-row">
+    <view wx:for="{{weekDays}}" wx:key="*this" class="weekday-item">{{item}}</view>
+  </view>
+
+  <!-- 日历网格 -->
+  <view class="calendar-grid">
+    <view wx:for="{{weeks}}" wx:key="index" class="week-row">
+      <view
+        wx:for="{{item}}"
+        wx:key="dateStr"
+        wx:for-item="day"
+        class="day-cell {{day.empty ? 'empty' : ''}} {{day.isToday ? 'today' : ''}} {{day.mark ? 'has-mark' : ''}}"
+        data-date-str="{{day.dateStr}}"
+        data-is-past="{{day.isPast}}"
+        data-mark="{{day.mark}}"
+        bindtap="onDateTap"
+      >
+        <view wx:if="{{!day.empty}}" class="day-inner">
+          <text class="day-num">{{day.day}}</text>
+          <!-- 历史经期标记 -->
+          <view wx:if="{{day.mark && day.mark.type === 'period'}}" class="mark period-mark">
+            <view wx:if="{{day.mark.start}}" class="mark-dot start"></view>
+            <view wx:if="{{day.mark.end}}" class="mark-dot end"></view>
+          </view>
+          <!-- 预测标记 -->
+          <view wx:elif="{{day.mark && day.mark.type === 'predict'}}" class="mark predict-mark">
+            <view wx:if="{{day.mark.start}}" class="mark-dot predict-dot"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 图例 -->
+  <view class="legend">
+    <view class="legend-item">
+      <view class="legend-color period-color"></view>
+      <text>历史经期</text>
+    </view>
+    <view class="legend-item">
+      <view class="legend-color predict-color"></view>
+      <text>预测经期</text>
+    </view>
+  </view>
+
+  <!-- 编辑弹窗 -->
+  <view wx:if="{{showEditPopup}}" class="mask" bindtap="closeEditPopup">
+    <view class="popup-panel" catchtap="preventBubble">
+      <view class="popup-title">{{editDateStr}}</view>
+
+      <view wx:if="{{isInHistory}}" class="popup-hint">已记录的经期</view>
+      <view wx:elif="{{isInPredict}}" class="popup-hint predict-hint">预测经期</view>
+      <view wx:else class="popup-hint">无记录日期</view>
+
+      <!-- 操作按钮 -->
+      <view class="edit-actions">
+        <button class="edit-btn" bindtap="onSetAsFirstDay">
+          {{existingRecord ? '修改为开始日' : '设为经期第一天'}}
+        </button>
+        <button wx:if="{{existingRecord}}" class="edit-btn edit-btn-end" bindtap="onSetAsEndDay">
+          设为经期结束日
+        </button>
+      </view>
+
+      <!-- 标签编辑（仅已有记录时显示） -->
+      <view wx:if="{{existingRecord}}" class="tag-section">
+        <view class="tag-section-title">痛经程度</view>
+        <view class="tag-list">
+          <view
+            wx:for="{{painLevels}}"
+            wx:key="key"
+            class="tag-item {{editPain === item.key ? 'active' : ''}}"
+            data-group="editPain"
+            data-key="{{item.key}}"
+            bindtap="onEditTagSelect"
+          >{{item.label}}</view>
+        </view>
+      </view>
+
+      <view wx:if="{{existingRecord}}" class="tag-section">
+        <view class="tag-section-title">血量多少</view>
+        <view class="tag-list">
+          <view
+            wx:for="{{flowLevels}}"
+            wx:key="key"
+            class="tag-item {{editFlow === item.key ? 'active' : ''}}"
+            data-group="editFlow"
+            data-key="{{item.key}}"
+            bindtap="onEditTagSelect"
+          >{{item.label}}</view>
+        </view>
+      </view>
+
+      <view wx:if="{{existingRecord}}" class="tag-section">
+        <view class="tag-section-title">心情状态</view>
+        <view class="tag-list">
+          <view
+            wx:for="{{moodOptions}}"
+            wx:key="key"
+            class="tag-item {{editMoods.indexOf(item.key) > -1 ? 'active' : ''}}"
+            data-group="editMoods"
+            data-key="{{item.key}}"
+            bindtap="onEditTagSelect"
+          >{{item.label}}</view>
+        </view>
+      </view>
+
+      <!-- 保存标签 -->
+      <view wx:if="{{existingRecord}}" class="popup-actions">
+        <button class="btn-primary btn-confirm" bindtap="onSaveTags">保存标签</button>
+      </view>
+    </view>
+  </view>
+
+</view>

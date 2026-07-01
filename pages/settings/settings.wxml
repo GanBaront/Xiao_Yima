@@ -1,0 +1,298 @@
+<!-- 设置页 -->
+<view class="page-container">
+
+  <!-- 统计卡片 -->
+  <view class="stats-section">
+    <view class="section-title">数据统计</view>
+    <view class="stats-grid">
+      <view class="stat-card card stat-card-tappable" bindtap="onViewHistory">
+        <view class="stat-num">{{totalRecords}}</view>
+        <view class="stat-txt">历史记录 ›</view>
+      </view>
+      <view class="stat-card card">
+        <view class="stat-num">{{avgCycle}}</view>
+        <view class="stat-txt">平均周期（天）</view>
+      </view>
+      <view class="stat-card card">
+        <view class="stat-num">{{avgPeriod}}</view>
+        <view class="stat-txt">平均姨妈期（天）</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 参数设置 -->
+  <view class="settings-section">
+    <view class="section-title">生理参数</view>
+
+    <view class="setting-item card">
+      <view class="setting-header">
+        <view class="setting-label">默认周期天数</view>
+        <view class="setting-value">{{cycleLength}} 天</view>
+      </view>
+      <slider
+        min="21"
+        max="40"
+        value="{{cycleLength}}"
+        activeColor="#FF6B81"
+        backgroundColor="#FFE4E8"
+        block-size="22"
+        bindchanging="onCycleChange"
+        show-value="{{false}}"
+      />
+      <view class="slider-range">
+        <text>21</text>
+        <text>40</text>
+      </view>
+    </view>
+
+    <view class="setting-item card">
+      <view class="setting-header">
+        <view class="setting-label">默认姨妈期天数</view>
+        <view class="setting-value">{{periodLength}} 天</view>
+      </view>
+      <slider
+        min="3"
+        max="10"
+        value="{{periodLength}}"
+        activeColor="#FF6B81"
+        backgroundColor="#FFE4E8"
+        block-size="22"
+        bindchanging="onPeriodChange"
+        show-value="{{false}}"
+      />
+      <view class="slider-range">
+        <text>3</text>
+        <text>10</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 数据管理 -->
+  <view class="data-section">
+    <view class="section-title">数据管理</view>
+
+    <view class="data-actions">
+      <button class="data-btn btn-primary" bindtap="onExportData">
+        📤 导出数据
+      </button>
+      <button class="data-btn btn-outline" bindtap="onImportData">
+        📥 导入数据
+      </button>
+    </view>
+
+    <view class="data-tip">
+      导出为 JSON 文件，可通过微信发送给"文件传输助手"备份。
+      导入时将自动合并，已有记录不会重复。
+    </view>
+  </view>
+
+  <!-- 危险操作 -->
+  <view class="danger-section">
+    <button class="danger-btn" bindtap="onClearData">清空所有数据</button>
+  </view>
+
+  <!-- 版本信息 -->
+  <view class="version-info">
+    <text>晓姨妈 v1.0.0</text>
+  </view>
+
+  <!-- ==================== 弹窗 ==================== -->
+
+  <!-- 导入方式选择 -->
+  <view wx:if="{{showImportMethod}}" class="mask" bindtap="closeImportMethod">
+    <view class="popup-panel popup-small" catchtap="preventBubble">
+      <view class="popup-title">选择导入方式</view>
+      <view class="method-actions">
+        <button class="method-btn" bindtap="onFileImport">
+          <view class="method-icon">📁</view>
+          <view class="method-label">文件导入</view>
+          <view class="method-desc">从聊天记录选择 JSON 文件</view>
+        </button>
+        <button class="method-btn" bindtap="onManualImport">
+          <view class="method-icon">📝</view>
+          <view class="method-label">手动导入</view>
+          <view class="method-desc">在日历上自行填写经期</view>
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 手动导入弹窗 -->
+  <view wx:if="{{showManualImport}}" class="mask" bindtap="closeManualImport">
+    <view class="popup-panel popup-manual" catchtap="preventBubble">
+      <view class="popup-title">手动填写经期</view>
+      <view class="popup-subtitle">选择日期区间，逐条添加</view>
+
+      <!-- 月份切换 -->
+      <view class="manual-month-header">
+        <view class="month-arrow" bindtap="prevManualMonth">‹</view>
+        <view class="month-title-small">{{manualYear}}年 {{manualMonth}}月</view>
+        <view class="month-arrow" bindtap="nextManualMonth">›</view>
+      </view>
+
+      <!-- 星期头 -->
+      <view class="manual-weekday-row">
+        <view wx:for="{{manualWeekDays}}" wx:key="*this" class="manual-weekday">{{item}}</view>
+      </view>
+
+      <!-- 日历网格 -->
+      <view class="manual-calendar">
+        <view wx:for="{{manualWeeks}}" wx:key="index" class="manual-week-row">
+          <view
+            wx:for="{{item}}"
+            wx:key="dateStr"
+            wx:for-item="day"
+            class="manual-day {{day.empty ? 'empty' : ''}} {{day.inRange ? 'in-range' : ''}} {{day.isStart ? 'range-start' : ''}} {{day.isEnd ? 'range-end' : ''}} {{day.isFuture ? 'future' : ''}}"
+            data-date-str="{{day.dateStr}}"
+            data-is-future="{{day.isFuture}}"
+            bindtap="onManualDateTap"
+          >
+            <text wx:if="{{!day.empty}}" class="manual-day-num">{{day.day}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 已选区间提示 -->
+      <view wx:if="{{manualStart}}" class="manual-range-hint">
+        已选：{{manualStart}} {{manualEnd ? '~ ' + manualEnd : ''}}（{{manualEnd ? '' : '点击第二日确定区间'}}）
+      </view>
+
+      <!-- 标签选择 -->
+      <view class="tag-section">
+        <view class="tag-section-title">痛经程度</view>
+        <view class="tag-list">
+          <view
+            wx:for="{{painLevels}}"
+            wx:key="key"
+            class="tag-item {{manualPain === item.key ? 'active' : ''}}"
+            data-group="manualPain"
+            data-key="{{item.key}}"
+            bindtap="onManualTagSelect"
+          >{{item.label}}</view>
+        </view>
+      </view>
+
+      <view class="tag-section">
+        <view class="tag-section-title">血量多少</view>
+        <view class="tag-list">
+          <view
+            wx:for="{{flowLevels}}"
+            wx:key="key"
+            class="tag-item {{manualFlow === item.key ? 'active' : ''}}"
+            data-group="manualFlow"
+            data-key="{{item.key}}"
+            bindtap="onManualTagSelect"
+          >{{item.label}}</view>
+        </view>
+      </view>
+
+      <view class="tag-section">
+        <view class="tag-section-title">心情状态</view>
+        <view class="tag-list">
+          <view
+            wx:for="{{moodOptions}}"
+            wx:key="key"
+            class="tag-item {{manualMood === item.key ? 'active' : ''}}"
+            data-group="manualMood"
+            data-key="{{item.key}}"
+            bindtap="onManualTagSelect"
+          >{{item.label}}</view>
+        </view>
+      </view>
+
+      <button class="btn-outline add-record-btn" bindtap="onAddManualRecord">
+        ➕ 添加此记录
+      </button>
+
+      <!-- 待导入列表 -->
+      <view wx:if="{{manualPending.length > 0}}" class="pending-list">
+        <view class="pending-title">待导入（{{manualPending.length}} 条）</view>
+        <view wx:for="{{manualPending}}" wx:key="id" class="pending-item">
+          <view class="pending-info">
+            <text class="pending-dates">{{item.startDate}} ~ {{item.endDate}}</text>
+            <text wx:if="{{item.tags.pain}}" class="pending-tag">· {{item.tags.pain === "light" ? "轻度" : item.tags.pain === "medium" ? "中度" : "重度"}}痛经</text>
+            <text wx:if="{{item.tags.flow}}" class="pending-tag">· {{item.tags.flow === "low" ? "量少" : item.tags.flow === "medium" ? "量中" : "量多"}}</text>
+          </view>
+          <view class="pending-remove" data-id="{{item.id}}" bindtap="onRemoveManualRecord">✕</view>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="manual-actions">
+        <button class="btn-outline manual-cancel" bindtap="closeManualImport">取消</button>
+        <button class="btn-primary manual-confirm" bindtap="onConfirmManualImport">
+          确认导入（{{manualPending.length}} 条）
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 导入结果弹窗 -->
+  <view wx:if="{{showImportResult}}" class="mask" bindtap="closeImportResult">
+    <view class="popup-panel popup-small" catchtap="preventBubble">
+      <view class="popup-title">
+        {{importResult.success ? '导入成功 ✅' : '导入失败 ❌'}}
+      </view>
+      <view wx:if="{{importResult.success}}" class="import-detail">
+        <view class="import-row">
+          <text>总记录数：</text>
+          <text class="import-bold">{{importResult.totalRecords}}</text>
+        </view>
+        <view class="import-row">
+          <text>新增记录：</text>
+          <text class="import-bold new">{{importResult.newRecords}}</text>
+        </view>
+      </view>
+      <view wx:else class="import-detail">
+        <text>{{importResult.message}}</text>
+      </view>
+      <button class="btn-primary btn-confirm" bindtap="closeImportResult">知道了</button>
+    </view>
+  </view>
+
+  <!-- 历史记录弹窗 -->
+  <view wx:if="{{showHistory}}" class="mask" bindtap="closeHistory">
+    <view class="popup-panel popup-history" catchtap="preventBubble">
+      <view class="popup-title">往期记录</view>
+
+      <!-- 日期搜索栏 -->
+      <view class="history-search">
+        <picker mode="date" fields="month" value="{{historySearchDate}}" bindchange="onHistorySearchDateChange">
+          <view class="history-search-input {{historySearchDate ? 'has-value' : ''}}">
+            <text class="search-icon">🔍</text>
+            <text wx:if="{{!historySearchDate}}" class="search-placeholder">按月份搜索</text>
+            <text wx:else class="search-value">{{historySearchDate}}</text>
+          </view>
+        </picker>
+        <view wx:if="{{historySearchDate}}" class="search-clear" bindtap="onClearHistorySearch">✕</view>
+      </view>
+
+      <view wx:if="{{historyRecords.length === 0}}" class="history-empty">
+        {{historySearchDate ? '该月份无记录' : '暂无记录'}}
+      </view>
+
+      <scroll-view wx:else scroll-y class="history-scroll">
+        <view wx:for="{{historyRecords}}" wx:key="id" class="history-item">
+          <view class="history-item-main">
+            <view class="history-dates">
+              <text class="history-date-range">{{item.startDate}} ~ {{item.endDate}}</text>
+              <text wx:if="{{item.isActive}}" class="history-active-badge">进行中</text>
+            </view>
+            <view class="history-meta">
+              <text>持续 {{item.duration}}</text>
+              <text wx:if="{{item.cycle !== '—'}}" class="history-sep">|</text>
+              <text wx:if="{{item.cycle !== '—'}}">周期 {{item.cycle}}</text>
+            </view>
+            <view wx:if="{{item.tags.length > 0}}" class="history-tags">
+              <text wx:for="{{item.tags}}" wx:key="*this" class="history-tag">{{item}}</text>
+            </view>
+          </view>
+          <view class="history-delete" data-id="{{item.id}}" catchtap="onDeleteHistoryRecord">
+            <text>🗑</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+</view>

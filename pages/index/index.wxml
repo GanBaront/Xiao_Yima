@@ -1,0 +1,124 @@
+<!-- 首页 -->
+<view class="page-container">
+
+  <!-- 冷启动：没有记录 -->
+  <view wx:if="{{needFirstRecord}}" class="hero-section">
+    <view class="hero-icon">🌸</view>
+    <view class="hero-title">欢迎使用晓姨妈</view>
+    <view class="hero-desc">记录你的第一次经期，开始呵护自己</view>
+  </view>
+
+  <!-- 生理期内 -->
+  <view wx:elif="{{isInPeriod}}" class="hero-section">
+    <view class="status-badge in-period">进行中</view>
+    <view class="hero-circle in-period-circle">
+      <view class="hero-number">{{periodDay}}</view>
+      <view class="hero-unit">天</view>
+    </view>
+    <view class="hero-label">生理期第 {{periodDay}} 天</view>
+    <view class="hero-sub">好好休息，照顾好自己 🌸</view>
+  </view>
+
+  <!-- 非生理期 -->
+  <view wx:else class="hero-section">
+    <view wx:if="{{isOverdue}}" class="status-badge overdue">已延迟</view>
+    <view wx:else class="status-badge waiting">等待中</view>
+    <view class="hero-circle waiting-circle">
+      <view class="hero-number">{{isOverdue ? '?' : daysUntil}}</view>
+      <view class="hero-unit">天</view>
+    </view>
+    <view wx:if="{{isOverdue}}" class="hero-label">
+      预测日期已过 {{daysUntil}} 天
+    </view>
+    <view wx:else class="hero-label">
+      距离下一次预测还有 {{daysUntil}} 天
+    </view>
+    <view wx:if="{{nextStartDate}}" class="hero-sub">
+      预计 {{nextStartDate}}
+    </view>
+  </view>
+
+  <!-- 主操作按钮 -->
+  <view class="action-section">
+    <button wx:if="{{isInPeriod}}" class="btn-main btn-end" catchtap="onMainButtonTap">
+      姨妈走啦
+    </button>
+    <button wx:else class="btn-main btn-start" catchtap="onMainButtonTap">
+      姨妈来啦
+    </button>
+  </view>
+
+  <!-- 快速统计 -->
+  <view wx:if="{{!needFirstRecord}}" class="stats-row">
+    <view class="stat-item card">
+      <view class="stat-value">{{periodDay || '--'}}</view>
+      <view class="stat-label">本次天数</view>
+    </view>
+    <view class="stat-item card">
+      <view class="stat-value">{{daysUntil || '--'}}</view>
+      <view class="stat-label">距下次</view>
+    </view>
+  </view>
+
+  <!-- 状态标签弹窗 -->
+  <view wx:if="{{showTagsPopup}}" class="mask" bindtap="closeTagsPopup">
+    <view class="popup-panel" catchtap="preventBubble">
+      <view class="popup-title">
+        {{pendingAction === 'start' ? '记录今日状态' : '结束本次经期'}}
+      </view>
+      <view class="popup-subtitle">选填，可不选直接确认</view>
+
+      <!-- 痛经程度 -->
+      <view class="tag-section">
+        <view class="tag-section-title">痛经程度</view>
+        <view class="tag-list">
+          <view
+            wx:for="{{painLevels}}"
+            wx:key="key"
+            class="tag-item {{item.selected ? 'active' : ''}}"
+            data-group="painLevels"
+            data-key="{{item.key}}"
+            bindtap="onTagSelect"
+          >{{item.label}}</view>
+        </view>
+      </view>
+
+      <!-- 血量多少 -->
+      <view class="tag-section">
+        <view class="tag-section-title">血量多少</view>
+        <view class="tag-list">
+          <view
+            wx:for="{{flowLevels}}"
+            wx:key="key"
+            class="tag-item {{item.selected ? 'active' : ''}}"
+            data-group="flowLevels"
+            data-key="{{item.key}}"
+            bindtap="onTagSelect"
+          >{{item.label}}</view>
+        </view>
+      </view>
+
+      <!-- 心情状态 -->
+      <view class="tag-section">
+        <view class="tag-section-title">心情状态</view>
+        <view class="tag-list">
+          <view
+            wx:for="{{moods}}"
+            wx:key="key"
+            class="tag-item {{item.selected ? 'active' : ''}}"
+            data-group="moods"
+            data-key="{{item.key}}"
+            bindtap="onTagSelect"
+          >{{item.label}}</view>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="popup-actions">
+        <button class="btn-outline btn-skip" bindtap="onSkipTags">取消</button>
+        <button class="btn-primary btn-confirm" bindtap="onConfirmTags">确认</button>
+      </view>
+    </view>
+  </view>
+
+</view>
