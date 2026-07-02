@@ -1,4 +1,6 @@
 // app.js
+const storage = require('./utils/storage.js')
+
 App({
   onLaunch() {
     // 静默登录：获取微信用户 openId
@@ -19,6 +21,13 @@ App({
         cycleLength: 28,
         periodLength: 5
       })
+    }
+
+    // 启动时重算 cycleLength，清理跨 skipped 月份的脏周期数据
+    const history = storage.getPeriodHistory()
+    if (history.length > 0) {
+      const recalculated = storage.recalculateCycles(history)
+      storage.savePeriodHistory(recalculated)
     }
   },
 
