@@ -70,10 +70,7 @@ Page({
 
   loadSettings() {
     const settings = storage.getSettings()
-    // 每次加载时重算 cycleLength，确保跨 skipped 月份的脏周期被清除
-    let history = storage.getPeriodHistory()
-    history = storage.recalculateCycles(history)
-    storage.savePeriodHistory(history)
+    const history = storage.getPeriodHistory()
 
     // 收集 ≥ 4 次记录时，用加权平均值自动校准生理参数（排除 skipped）
     const validHistory = history.filter(p => !p.skipped)
