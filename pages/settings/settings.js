@@ -529,7 +529,7 @@ Page({
         id: p.id,
         startDate: p.startDate,
         endDate: p.endDate || '进行中',
-        duration: p.periodLength ? `${p.periodLength} 天` : '—',
+        duration: (p.periodLength && p.periodLength > 1) ? `${p.periodLength} 天` : '—',
         cycle: p.cycleLength ? `${p.cycleLength} 天` : '—',
         tags: tags,
         isActive: !p.endDate
