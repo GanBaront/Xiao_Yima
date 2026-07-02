@@ -78,7 +78,6 @@ Page({
       const stats = predict.getCycleStats(history)
       if (stats && stats.avgCycle) {
         settings.cycleLength = stats.avgCycle
-        settings.periodLength = stats.avgPeriod || settings.periodLength
         storage.saveSettings(settings)
       }
     }
