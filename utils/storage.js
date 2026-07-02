@@ -87,12 +87,19 @@ const recalculateCycles = (history) => {
       sorted[i].cycleLength = null
       continue
     }
-    // 跳过 skipped 记录，找上一条有效记录计算周期
+    // 找上一条有效记录；若中间有 skipped 月份，周期视为脏数据不参与平均
     let prev = null
+    let hasSkippedGap = false
     for (let j = i - 1; j >= 0; j--) {
-      if (!sorted[j].skipped) { prev = sorted[j]; break }
+      if (sorted[j].skipped) { hasSkippedGap = true; continue }
+      prev = sorted[j]
+      break
     }
-    sorted[i].cycleLength = prev ? util.diffDays(prev.startDate, sorted[i].startDate) : null
+    if (prev && !hasSkippedGap) {
+      sorted[i].cycleLength = util.diffDays(prev.startDate, sorted[i].startDate)
+    } else {
+      sorted[i].cycleLength = null
+    }
   }
   return sorted
 }
