@@ -166,6 +166,11 @@
   margin-bottom: 8rpx;
 }
 
+.stat-unit {
+  font-size: 28rpx;
+  font-weight: 400;
+}
+
 .stat-label {
   font-size: 24rpx;
   color: #999999;

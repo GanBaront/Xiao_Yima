@@ -383,6 +383,39 @@ Page({
     wx.showToast({ title: '已添加', icon: 'success', duration: 1000 })
   },
 
+  // 当月没来
+  onSkipMonth() {
+    const { manualYear, manualMonth } = this.data
+    const monthStr = `${manualYear}-${String(manualMonth).padStart(2, '0')}`
+
+    // 检查当月是否已有经期记录
+    const existing = storage.getPeriodHistory()
+    if (existing.some(p => p.startDate.startsWith(monthStr))) {
+      wx.showToast({ title: '该月已有经期记录', icon: 'none' })
+      return
+    }
+
+    // 检查待导入列表
+    if (this.data.manualPending.some(p => p.startDate.startsWith(monthStr))) {
+      wx.showToast({ title: '该月已添加记录', icon: 'none' })
+      return
+    }
+
+    const record = {
+      id: 'skip-' + monthStr,
+      startDate: monthStr + '-01',
+      endDate: null,
+      skipped: true,
+      periodLength: null,
+      tags: {},
+      displayMonth: `${manualYear}年${manualMonth}月`
+    }
+
+    const newPending = [...this.data.manualPending, record].sort((a, b) => a.startDate.localeCompare(b.startDate))
+    this.setData({ manualPending: newPending })
+    wx.showToast({ title: `${manualYear}年${manualMonth}月 已标记为没来`, icon: 'success', duration: 1200 })
+  },
+
   // 删除待导入列表中的某条
   onRemoveManualRecord(e) {
     const { id } = e.currentTarget.dataset
@@ -406,7 +439,7 @@ Page({
       const exists = history.find(p => String(p.id) === String(record.id))
       if (!exists) {
         record.cycleLength = null
-        record.periodLength = util.diffDays(record.startDate, record.endDate) + 1
+        record.periodLength = record.skipped ? null : (util.diffDays(record.startDate, record.endDate) + 1)
         merged.push(record)
         newCount++
       }
@@ -468,6 +501,21 @@ Page({
     }
 
     const formatRecord = (p) => {
+      if (p.skipped) {
+        const parts = p.startDate.split('-')
+        const monthLabel = `${parseInt(parts[0])}年${parseInt(parts[1])}月`
+        return {
+          id: p.id,
+          startDate: monthLabel,
+          endDate: '没来',
+          duration: '—',
+          cycle: '—',
+          tags: [],
+          isActive: false,
+          skipped: true,
+          searchMonth: `${parts[0]}-${parts[1]}`  // 用于按月份搜索
+        }
+      }
       const tags = []
       if (p.tags) {
         if (p.tags.pain) tags.push(TAG_LABELS.pain[p.tags.pain] || p.tags.pain)
@@ -506,8 +554,11 @@ Page({
       this.setData({ historySearchDate: month, historyRecords: allRecords })
       return
     }
-    // 筛选：记录开始日期以该月份开头
-    const filtered = allRecords.filter(r => r.startDate.startsWith(month))
+    // 筛选：记录开始日期以该月份开头（skipped 记录用 searchMonth 匹配）
+    const filtered = allRecords.filter(r => {
+      if (r.searchMonth) return r.searchMonth === month
+      return r.startDate.startsWith(month)
+    })
     this.setData({ historySearchDate: month, historyRecords: filtered })
   },
 

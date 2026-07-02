@@ -55,7 +55,7 @@
       <view class="stat-label">本次天数</view>
     </view>
     <view class="stat-item card">
-      <view class="stat-value">{{daysUntil || '--'}}</view>
+      <view class="stat-value">{{daysUntil || '--'}}<text wx:if="{{daysUntil}}" class="stat-unit"> 天</text></view>
       <view class="stat-label">距下次</view>
     </view>
   </view>

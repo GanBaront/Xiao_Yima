@@ -200,18 +200,26 @@
         </view>
       </view>
 
-      <button class="btn-outline add-record-btn" bindtap="onAddManualRecord">
-        ➕ 添加此记录
-      </button>
+      <view class="add-actions">
+        <button class="btn-outline add-record-btn" bindtap="onAddManualRecord">
+          ➕ 添加经期记录
+        </button>
+        <view class="skip-month-btn" bindtap="onSkipMonth">
+          🚫 当月没来
+        </view>
+      </view>
 
       <!-- 待导入列表 -->
       <view wx:if="{{manualPending.length > 0}}" class="pending-list">
         <view class="pending-title">待导入（{{manualPending.length}} 条）</view>
         <view wx:for="{{manualPending}}" wx:key="id" class="pending-item">
           <view class="pending-info">
-            <text class="pending-dates">{{item.startDate}} ~ {{item.endDate}}</text>
-            <text wx:if="{{item.tags.pain}}" class="pending-tag">· {{item.tags.pain === "light" ? "轻度" : item.tags.pain === "medium" ? "中度" : "重度"}}痛经</text>
-            <text wx:if="{{item.tags.flow}}" class="pending-tag">· {{item.tags.flow === "low" ? "量少" : item.tags.flow === "medium" ? "量中" : "量多"}}</text>
+            <text wx:if="{{item.skipped}}" class="pending-dates pending-skipped">{{item.displayMonth}} 没来</text>
+            <block wx:else>
+              <text class="pending-dates">{{item.startDate}} ~ {{item.endDate}}</text>
+              <text wx:if="{{item.tags.pain}}" class="pending-tag">· {{item.tags.pain === "light" ? "轻度" : item.tags.pain === "medium" ? "中度" : "重度"}}痛经</text>
+              <text wx:if="{{item.tags.flow}}" class="pending-tag">· {{item.tags.flow === "low" ? "量少" : item.tags.flow === "medium" ? "量中" : "量多"}}</text>
+            </block>
           </view>
           <view class="pending-remove" data-id="{{item.id}}" bindtap="onRemoveManualRecord">✕</view>
         </view>
@@ -272,20 +280,26 @@
       </view>
 
       <scroll-view wx:else scroll-y class="history-scroll">
-        <view wx:for="{{historyRecords}}" wx:key="id" class="history-item">
+        <view wx:for="{{historyRecords}}" wx:key="id" class="history-item {{item.skipped ? 'history-item-skipped' : ''}}">
           <view class="history-item-main">
-            <view class="history-dates">
-              <text class="history-date-range">{{item.startDate}} ~ {{item.endDate}}</text>
-              <text wx:if="{{item.isActive}}" class="history-active-badge">进行中</text>
+            <view wx:if="{{item.skipped}}" class="history-dates">
+              <text class="history-date-range">{{item.startDate}}</text>
+              <text class="history-skipped-badge">没来</text>
             </view>
-            <view class="history-meta">
-              <text>持续 {{item.duration}}</text>
-              <text wx:if="{{item.cycle !== '—'}}" class="history-sep">|</text>
-              <text wx:if="{{item.cycle !== '—'}}">周期 {{item.cycle}}</text>
-            </view>
-            <view wx:if="{{item.tags.length > 0}}" class="history-tags">
-              <text wx:for="{{item.tags}}" wx:key="*this" class="history-tag">{{item}}</text>
-            </view>
+            <block wx:else>
+              <view class="history-dates">
+                <text class="history-date-range">{{item.startDate}} ~ {{item.endDate}}</text>
+                <text wx:if="{{item.isActive}}" class="history-active-badge">进行中</text>
+              </view>
+              <view class="history-meta">
+                <text>持续 {{item.duration}}</text>
+                <text wx:if="{{item.cycle !== '—'}}" class="history-sep">|</text>
+                <text wx:if="{{item.cycle !== '—'}}">周期 {{item.cycle}}</text>
+              </view>
+              <view wx:if="{{item.tags.length > 0}}" class="history-tags">
+                <text wx:for="{{item.tags}}" wx:key="*this" class="history-tag">{{item}}</text>
+              </view>
+            </block>
           </view>
           <view class="history-delete" data-id="{{item.id}}" catchtap="onDeleteHistoryRecord">
             <text>🗑</text>

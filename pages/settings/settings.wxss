@@ -306,18 +306,41 @@
   border-radius: 10rpx;
 }
 
-/* 添加按钮 */
+/* 添加操作按钮组 */
+.add-actions {
+  display: flex;
+  align-items: center;
+  margin-top: 10rpx;
+}
+
 .add-record-btn {
-  width: 100%;
+  flex: 1;
   height: 76rpx;
   line-height: 76rpx;
   font-size: 28rpx;
   border-radius: 16rpx;
-  margin-top: 10rpx;
   padding: 0;
+  margin-right: 16rpx;
 }
 
 .add-record-btn::after { border: none; }
+
+.skip-month-btn {
+  height: 76rpx;
+  line-height: 76rpx;
+  padding: 0 24rpx;
+  font-size: 26rpx;
+  color: #999999;
+  background: #F5F5F5;
+  border-radius: 16rpx;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.skip-month-btn:active {
+  background: #FFE4E8;
+  color: #FF6B81;
+}
 
 /* 待导入列表 */
 .pending-list {
@@ -363,6 +386,11 @@
 .pending-tag {
   font-size: 22rpx;
   color: #999999;
+}
+
+.pending-dates.pending-skipped {
+  color: #999999;
+  font-style: italic;
 }
 
 .pending-remove {
@@ -511,6 +539,19 @@
 
 .history-item:last-child {
   border-bottom: none;
+}
+
+/* 没来记录 */
+.history-item-skipped {
+  opacity: 0.65;
+}
+
+.history-skipped-badge {
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 10rpx;
+  background: #F0F0F0;
+  color: #999999;
 }
 
 .history-item-main {

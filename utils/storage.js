@@ -80,11 +80,16 @@ const checkOverlap = (startDate, endDate, excludeId = null) => {
 const recalculateCycles = (history) => {
   const sorted = [...history].sort((a, b) => a.startDate.localeCompare(b.startDate))
   for (let i = 0; i < sorted.length; i++) {
-    if (i === 0) {
+    if (sorted[i].skipped) {
       sorted[i].cycleLength = null
-    } else {
-      sorted[i].cycleLength = util.diffDays(sorted[i - 1].startDate, sorted[i].startDate)
+      continue
     }
+    // 跳过 skipped 记录，找上一条有效记录计算周期
+    let prev = null
+    for (let j = i - 1; j >= 0; j--) {
+      if (!sorted[j].skipped) { prev = sorted[j]; break }
+    }
+    sorted[i].cycleLength = prev ? util.diffDays(prev.startDate, sorted[i].startDate) : null
   }
   return sorted
 }
