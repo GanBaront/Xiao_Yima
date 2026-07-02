@@ -123,8 +123,9 @@ const addPeriod = (period) => {
   if (existing && !period.endDate) {
     // 已有进行中的经期
     const today = util.today()
-    if (existing.startDate < today) {
-      // 过往遗留的活跃记录（如导入数据所致），自动关闭后再新建
+    const existingAge = util.diffDays(existing.startDate, today)
+    if (existingAge > 10) {
+      // 仅对超 10 天的遗留活跃记录自动关闭（多为数据导入异常），正常经期不自动关
       existing.endDate = existing.startDate
       existing.periodLength = 1
     } else {

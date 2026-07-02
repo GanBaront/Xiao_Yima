@@ -72,9 +72,10 @@ Page({
     const settings = storage.getSettings()
     const history = storage.getPeriodHistory()
 
-    // 收集 ≥ 4 次记录时，用加权平均值自动校准生理参数
-    const historyWithCycle = history.filter(p => p.cycleLength !== null)
-    if (history.length >= 4 && historyWithCycle.length >= 3) {
+    // 收集 ≥ 4 次记录时，用加权平均值自动校准生理参数（排除 skipped）
+    const validHistory = history.filter(p => !p.skipped)
+    const historyWithCycle = validHistory.filter(p => p.cycleLength !== null)
+    if (validHistory.length >= 4 && historyWithCycle.length >= 3) {
       const stats = predict.getCycleStats(history)
       if (stats && stats.avgCycle) {
         settings.cycleLength = stats.avgCycle
@@ -90,10 +91,11 @@ Page({
 
   loadStats() {
     const history = storage.getPeriodHistory()
+    const validHistory = history.filter(p => !p.skipped)
     const stats = predict.getCycleStats(history)
 
     this.setData({
-      totalRecords: history.length,
+      totalRecords: validHistory.length,
       avgCycle: stats ? stats.avgCycle : '--',
       avgPeriod: stats && stats.avgPeriod ? stats.avgPeriod : '--'
     })

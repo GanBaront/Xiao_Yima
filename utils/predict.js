@@ -8,8 +8,8 @@ const util = require('./util.js')
 const getCycleStats = (history) => {
   if (history.length < 2) return null
 
-  // 需要有 cycleLength 的有效记录
-  const validRecords = history.filter(p => p.cycleLength !== null)
+  // 需要有 cycleLength 的有效记录（排除 skipped）
+  const validRecords = history.filter(p => p.cycleLength !== null && !p.skipped)
   if (validRecords.length === 0) return null
 
   // 加权平均：越近权重越高 (index / sum of indices)
@@ -18,8 +18,8 @@ const getCycleStats = (history) => {
     return sum + p.cycleLength * (i + 1)
   }, 0) / totalWeight
 
-  // 加权平均 periodLength
-  const recordsWithLength = history.filter(p => p.periodLength !== null)
+  // 加权平均 periodLength（排除 skipped）
+  const recordsWithLength = history.filter(p => p.periodLength !== null && !p.skipped)
   let weightedPeriod = null
   if (recordsWithLength.length > 0) {
     const periodWeight = recordsWithLength.reduce((sum, _, i) => sum + (i + 1), 0)
@@ -68,16 +68,20 @@ const predictNext = () => {
     }
   }
 
-  // 取最后一次经期的开始日期
-  const lastPeriod = history[history.length - 1]
+  // 取最后一次有效经期（排除 skipped）
+  const validHistory = history.filter(p => !p.skipped)
+  if (validHistory.length === 0) {
+    return { isInPeriod: false, startDate: null, endDate: null, daysUntil: null, needFirstRecord: true }
+  }
+  const lastPeriod = validHistory[validHistory.length - 1]
 
   // 判断使用默认值还是加权平均值
-  const historyWithCycle = history.filter(p => p.cycleLength !== null)
+  const historyWithCycle = validHistory.filter(p => p.cycleLength !== null)
   let cycleLength, periodLength
 
   // 冷启动 vs 数据成熟：PRD 要求历史 ≥ 3 次启用加权平均
   // 首条记录无 cycleLength，所以至少需要 2 个有效 cycleLength（即 ≥ 3 条记录）
-  const dataMature = history.length >= 3 && historyWithCycle.length >= 2
+  const dataMature = validHistory.length >= 3 && historyWithCycle.length >= 2
 
   if (dataMature) {
     // 数据成熟：加权平均
@@ -128,12 +132,14 @@ const predictFuture = (count = 6) => {
   const history = storage.getPeriodHistory()
   const settings = storage.getSettings()
 
-  if (history.length === 0) return []
+  // 排除 skipped 记录
+  const validHistory = history.filter(p => !p.skipped)
+  if (validHistory.length === 0) return []
 
-  const historyWithCycle = history.filter(p => p.cycleLength !== null)
+  const historyWithCycle = validHistory.filter(p => p.cycleLength !== null)
   let cycleLength, periodLength
 
-  const dataMature = history.length >= 3 && historyWithCycle.length >= 2
+  const dataMature = validHistory.length >= 3 && historyWithCycle.length >= 2
 
   if (dataMature) {
     const stats = getCycleStats(history)
@@ -144,7 +150,7 @@ const predictFuture = (count = 6) => {
     periodLength = settings.periodLength
   }
 
-  const lastPeriod = history[history.length - 1]
+  const lastPeriod = validHistory[validHistory.length - 1]
   let lastStart = util.parseDate(lastPeriod.startDate)
   const today = util.today()
   const result = []

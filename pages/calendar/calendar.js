@@ -147,8 +147,9 @@ Page({
     const predictions = predict.predictFuture(6)
     const marked = {}
 
-    // 标记历史经期
+    // 标记历史经期（skipped 记录不参与渲染）
     history.forEach(p => {
+      if (p.skipped) return
       if (p.endDate) {
         const start = util.parseDate(p.startDate)
         const end = util.parseDate(p.endDate)
