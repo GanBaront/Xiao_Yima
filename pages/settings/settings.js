@@ -298,6 +298,13 @@ Page({
     this.renderManualCalendar()
   },
 
+  // 点击年份快速跳转
+  onManualYearChange(e) {
+    const year = parseInt(e.detail.value)  // picker fields="year" 返回 "2026"
+    this.setData({ manualYear: year })
+    this.renderManualCalendar()
+  },
+
   // 点击日期选择起止
   onManualDateTap(e) {
     const { dateStr, isFuture } = e.currentTarget.dataset

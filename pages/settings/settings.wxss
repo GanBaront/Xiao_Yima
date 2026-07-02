@@ -231,6 +231,15 @@
   color: #333333;
 }
 
+.month-title-tappable {
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+}
+
+.month-title-tappable:active {
+  background: #FFE4E8;
+}
+
 /* 星期头 */
 .manual-weekday-row {
   display: flex;

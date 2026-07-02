@@ -44,7 +44,9 @@ const saveSettings = (settings) => {
  */
 const getActivePeriod = () => {
   const history = getPeriodHistory()
-  return history.find(p => p.endDate === null) || null
+  // 排除 skipped 记录，取最近一条未结束的正常记录
+  const active = history.filter(p => p.endDate === null && !p.skipped)
+  return active.length > 0 ? active[active.length - 1] : null
 }
 
 /**
@@ -59,6 +61,7 @@ const checkOverlap = (startDate, endDate, excludeId = null) => {
   const newEnd = endDate ? util.parseDate(endDate) : new Date() // 进行中的用今天
 
   for (let p of history) {
+    if (p.skipped) continue // skipped 记录不参与重叠检测
     if (excludeId && String(p.id) === String(excludeId)) continue
 
     const pStart = util.parseDate(p.startDate)
@@ -101,8 +104,9 @@ const recalculateCycles = (history) => {
 const addPeriod = (period) => {
   const history = getPeriodHistory()
 
-  // 检查是否已有进行中的经期
-  const existing = history.find(p => p.endDate === null)
+  // 检查是否已有进行中的经期（排除 skipped 记录）
+  const activeList = history.filter(p => p.endDate === null && !p.skipped)
+  const existing = activeList.length > 0 ? activeList[activeList.length - 1] : null
 
   if (existing && period.endDate) {
     // 结束进行中的记录：跳过重叠检查（结束日必然与 active period 重叠）
@@ -117,8 +121,15 @@ const addPeriod = (period) => {
   }
 
   if (existing && !period.endDate) {
-    // 已有进行中的经期，不允许再开新的
-    return { success: false, message: '已有进行中的经期，请先结束' }
+    // 已有进行中的经期
+    const today = util.today()
+    if (existing.startDate < today) {
+      // 过往遗留的活跃记录（如导入数据所致），自动关闭后再新建
+      existing.endDate = existing.startDate
+      existing.periodLength = 1
+    } else {
+      return { success: false, message: '已有进行中的经期，请先结束' }
+    }
   }
 
   // 新增记录：重叠检测

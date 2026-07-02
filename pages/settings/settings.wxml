@@ -126,7 +126,9 @@
       <!-- 月份切换 -->
       <view class="manual-month-header">
         <view class="month-arrow" bindtap="prevManualMonth">‹</view>
-        <view class="month-title-small">{{manualYear}}年 {{manualMonth}}月</view>
+        <picker mode="date" fields="year" value="{{manualYear}}-01-01" bindchange="onManualYearChange">
+          <view class="month-title-small month-title-tappable">{{manualYear}}年 {{manualMonth}}月</view>
+        </picker>
         <view class="month-arrow" bindtap="nextManualMonth">›</view>
       </view>
 
