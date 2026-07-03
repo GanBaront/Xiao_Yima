@@ -4,7 +4,7 @@
   <!-- 冷启动：没有记录 -->
   <view wx:if="{{needFirstRecord}}" class="hero-section">
     <view class="hero-icon">🌸</view>
-    <view class="hero-title">欢迎使用晓姨妈</view>
+    <view class="hero-title">欢迎使用晓例假</view>
     <view class="hero-desc">记录你的第一次经期，开始呵护自己</view>
   </view>
 
