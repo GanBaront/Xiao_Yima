@@ -318,7 +318,7 @@ Page({
       // 全新选择：设为首日
       this.setData({ manualStart: dateStr, manualEnd: '' })
     } else if (manualStart && !manualEnd) {
-      // 已有首日：设为末日（允许同一天 = 1天经期）
+      // 已有首日：设为末日（允许同一天 = 1天姨妈期）
       if (dateStr < manualStart) {
         // 选中的更早：交换
         this.setData({ manualStart: dateStr, manualEnd: manualStart })
@@ -397,10 +397,10 @@ Page({
     const { manualYear, manualMonth } = this.data
     const monthStr = `${manualYear}-${String(manualMonth).padStart(2, '0')}`
 
-    // 检查当月是否已有经期记录
+    // 检查当月是否已有姨妈期记录
     const existing = storage.getPeriodHistory()
     if (existing.some(p => p.startDate.startsWith(monthStr))) {
-      wx.showToast({ title: '该月已有经期记录', icon: 'none' })
+      wx.showToast({ title: '该月已有姨妈期记录', icon: 'none' })
       return
     }
 
@@ -481,7 +481,7 @@ Page({
   onClearData() {
     wx.showModal({
       title: '确认清空',
-      content: '将删除所有经期记录和设置，此操作不可恢复。建议先导出数据备份。',
+      content: '将删除所有姨妈期记录和设置，此操作不可恢复。建议先导出数据备份。',
       confirmText: '确认清空',
       confirmColor: '#FF6B81',
       success: (res) => {
@@ -584,7 +584,7 @@ Page({
     const { id } = e.currentTarget.dataset
     wx.showModal({
       title: '确认删除',
-      content: '将永久删除该条经期记录，不可恢复。',
+      content: '将永久删除该条姨妈期记录，不可恢复。',
       confirmText: '删除',
       confirmColor: '#FF5252',
       success: (res) => {

@@ -28,7 +28,7 @@
       >
         <view wx:if="{{!day.empty}}" class="day-inner">
           <text class="day-num">{{day.day}}</text>
-          <!-- 历史经期标记 -->
+          <!-- 历史姨妈期标记 -->
           <view wx:if="{{day.mark && day.mark.type === 'period'}}" class="mark period-mark">
             <view wx:if="{{day.mark.start}}" class="mark-dot start"></view>
             <view wx:if="{{day.mark.end}}" class="mark-dot end"></view>
@@ -46,11 +46,11 @@
   <view class="legend">
     <view class="legend-item">
       <view class="legend-color period-color"></view>
-      <text>历史经期</text>
+      <text>历史姨妈期</text>
     </view>
     <view class="legend-item">
       <view class="legend-color predict-color"></view>
-      <text>预测经期</text>
+      <text>预测姨妈期</text>
     </view>
   </view>
 
@@ -59,17 +59,17 @@
     <view class="popup-panel" catchtap="preventBubble">
       <view class="popup-title">{{editDateStr}}</view>
 
-      <view wx:if="{{isInHistory}}" class="popup-hint">已记录的经期</view>
-      <view wx:elif="{{isInPredict}}" class="popup-hint predict-hint">预测经期</view>
+      <view wx:if="{{isInHistory}}" class="popup-hint">已记录的姨妈期</view>
+      <view wx:elif="{{isInPredict}}" class="popup-hint predict-hint">预测姨妈期</view>
       <view wx:else class="popup-hint">无记录日期</view>
 
       <!-- 操作按钮 -->
       <view class="edit-actions">
         <button class="edit-btn" bindtap="onSetAsFirstDay">
-          {{existingRecord ? '修改为开始日' : '设为经期第一天'}}
+          {{existingRecord ? '修改为开始日' : '设为姨妈期第一天'}}
         </button>
         <button wx:if="{{existingRecord}}" class="edit-btn edit-btn-end" bindtap="onSetAsEndDay">
-          设为经期结束日
+          设为姨妈期结束日
         </button>
       </view>
 

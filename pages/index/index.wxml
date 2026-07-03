@@ -5,7 +5,7 @@
   <view wx:if="{{needFirstRecord}}" class="hero-section">
     <view class="hero-icon">🌸</view>
     <view class="hero-title">欢迎使用晓例假</view>
-    <view class="hero-desc">记录你的第一次经期，开始呵护自己</view>
+    <view class="hero-desc">记录你的第一次姨妈期，开始呵护自己</view>
   </view>
 
   <!-- 生理期内 -->
@@ -64,7 +64,7 @@
   <view wx:if="{{showTagsPopup}}" class="mask" bindtap="closeTagsPopup">
     <view class="popup-panel" catchtap="preventBubble">
       <view class="popup-title">
-        {{pendingAction === 'start' ? '记录今日状态' : '结束本次经期'}}
+        {{pendingAction === 'start' ? '记录今日状态' : '结束本次姨妈期'}}
       </view>
       <view class="popup-subtitle">选填，可不选直接确认</view>
 

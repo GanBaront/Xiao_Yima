@@ -98,6 +98,10 @@
 
 .data-btn::after { border: none; }
 
+.data-btn.btn-outline {
+  background: #FFE4E8;
+}
+
 .data-tip {
   font-size: 24rpx;
   color: #CCCCCC;

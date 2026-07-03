@@ -32,7 +32,7 @@ App({
   },
 
   globalData: {
-    // 全局状态：当前经期信息
+    // 全局状态：当前姨妈期信息
     periodStatus: null
   }
 })

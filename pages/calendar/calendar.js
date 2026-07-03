@@ -147,7 +147,7 @@ Page({
     const predictions = predict.predictFuture(6)
     const marked = {}
 
-    // 标记历史经期（skipped 记录不参与渲染）
+    // 标记历史姨妈期（skipped 记录不参与渲染）
     history.forEach(p => {
       if (p.skipped) return
       if (p.endDate) {
@@ -208,7 +208,7 @@ Page({
     if (dateStr > util.today()) {
       // 未来预测日期，仅展示预测信息
       if (mark && mark.type === 'predict') {
-        wx.showToast({ title: '预测经期，暂无数据', icon: 'none' })
+        wx.showToast({ title: '预测姨妈期，暂无数据', icon: 'none' })
       }
       return
     }
@@ -262,7 +262,7 @@ Page({
       })
       if (!result.success) {
         if (result.overlap) {
-          wx.showToast({ title: '该日期与已有经期重叠', icon: 'none' })
+          wx.showToast({ title: '该日期与已有姨妈期重叠', icon: 'none' })
         } else {
           wx.showToast({ title: result.message || '操作失败', icon: 'none' })
         }
@@ -270,7 +270,7 @@ Page({
       }
     }
 
-    wx.showToast({ title: '已设为经期第一天', icon: 'none' })
+    wx.showToast({ title: '已设为姨妈期第一天', icon: 'none' })
     this.closeEditPopup()
     this.renderCalendar()
   },
@@ -297,7 +297,7 @@ Page({
       return
     }
 
-    wx.showToast({ title: '已设为经期结束日', icon: 'none' })
+    wx.showToast({ title: '已设为姨妈期结束日', icon: 'none' })
     this.closeEditPopup()
     this.renderCalendar()
   },
@@ -309,7 +309,7 @@ Page({
     const { existingRecord, editPain, editFlow, editMoods } = this.data
 
     if (!existingRecord) {
-      wx.showToast({ title: '请先设置经期日期', icon: 'none' })
+      wx.showToast({ title: '请先设置姨妈期日期', icon: 'none' })
       return
     }
 

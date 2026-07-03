@@ -111,7 +111,7 @@
         <button class="method-btn" bindtap="onManualImport">
           <view class="method-icon">📝</view>
           <view class="method-label">手动导入</view>
-          <view class="method-desc">在日历上自行填写经期</view>
+          <view class="method-desc">在日历上自行填写姨妈期</view>
         </button>
       </view>
     </view>
@@ -120,7 +120,7 @@
   <!-- 手动导入弹窗 -->
   <view wx:if="{{showManualImport}}" class="mask" bindtap="closeManualImport">
     <view class="popup-panel popup-manual" catchtap="preventBubble">
-      <view class="popup-title">手动填写经期</view>
+      <view class="popup-title">手动填写姨妈期</view>
       <view class="popup-subtitle">选择日期区间，逐条添加</view>
 
       <!-- 月份切换 -->
@@ -204,7 +204,7 @@
 
       <view class="add-actions">
         <button class="btn-outline add-record-btn" bindtap="onAddManualRecord">
-          ➕ 添加经期记录
+          ➕ 添加姨妈期记录
         </button>
         <view class="skip-month-btn" bindtap="onSkipMonth">
           🚫 当月没来

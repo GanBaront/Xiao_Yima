@@ -11,14 +11,14 @@ const DEFAULT_SETTINGS = {
 }
 
 /**
- * 获取经期历史记录
+ * 获取姨妈期历史记录
  */
 const getPeriodHistory = () => {
   return wx.getStorageSync(STORAGE_KEYS.PERIOD_HISTORY) || []
 }
 
 /**
- * 保存经期历史记录
+ * 保存姨妈期历史记录
  */
 const savePeriodHistory = (data) => {
   wx.setStorageSync(STORAGE_KEYS.PERIOD_HISTORY, data)
@@ -40,7 +40,7 @@ const saveSettings = (settings) => {
 }
 
 /**
- * 获取当前进行中的经期（endDate 为 null 的那条）
+ * 获取当前进行中的姨妈期（endDate 为 null 的那条）
  */
 const getActivePeriod = () => {
   const history = getPeriodHistory()
@@ -50,7 +50,7 @@ const getActivePeriod = () => {
 }
 
 /**
- * 检查日期是否与已有经期重叠
+ * 检查日期是否与已有姨妈期重叠
  * @param {string} startDate - yyyy-MM-dd
  * @param {string} endDate - yyyy-MM-dd (null 表示进行中)
  * @param {string} excludeId - 排除的记录 ID（更新时排除自身）
@@ -105,13 +105,13 @@ const recalculateCycles = (history) => {
 }
 
 /**
- * 新增一条经期记录
+ * 新增一条姨妈期记录
  * @param {object} period - { startDate, endDate, tags }
  */
 const addPeriod = (period) => {
   const history = getPeriodHistory()
 
-  // 检查是否已有进行中的经期（排除 skipped 记录）
+  // 检查是否已有进行中的姨妈期（排除 skipped 记录）
   const activeList = history.filter(p => p.endDate === null && !p.skipped)
   const existing = activeList.length > 0 ? activeList[activeList.length - 1] : null
 
@@ -128,22 +128,22 @@ const addPeriod = (period) => {
   }
 
   if (existing && !period.endDate) {
-    // 已有进行中的经期
+    // 已有进行中的姨妈期
     const today = util.today()
     const existingAge = util.diffDays(existing.startDate, today)
     if (existingAge > 10) {
-      // 仅对超 10 天的遗留活跃记录自动关闭（多为数据导入异常），正常经期不自动关
+      // 仅对超 10 天的遗留活跃记录自动关闭（多为数据导入异常），正常姨妈期不自动关
       existing.endDate = existing.startDate
       existing.periodLength = 1
     } else {
-      return { success: false, message: '已有进行中的经期，请先结束' }
+      return { success: false, message: '已有进行中的姨妈期，请先结束' }
     }
   }
 
   // 新增记录：重叠检测
   const overlap = checkOverlap(period.startDate, period.endDate)
   if (overlap) {
-    return { success: false, overlap: true, conflictPeriod: overlap, message: '该日期与已有经期重叠' }
+    return { success: false, overlap: true, conflictPeriod: overlap, message: '该日期与已有姨妈期重叠' }
   }
 
   // 计算 periodLength
@@ -170,7 +170,7 @@ const addPeriod = (period) => {
 }
 
 /**
- * 更新经期记录
+ * 更新姨妈期记录
  */
 const updatePeriod = (id, updates) => {
   const history = getPeriodHistory()
@@ -205,7 +205,7 @@ const updatePeriod = (id, updates) => {
 }
 
 /**
- * 删除一条经期记录
+ * 删除一条姨妈期记录
  * @param {string} id - 记录 ID
  */
 const deletePeriod = (id) => {
@@ -243,7 +243,7 @@ const importData = (jsonStr) => {
 
     // 格式校验
     if (!data.periodHistory || !Array.isArray(data.periodHistory)) {
-      return { success: false, message: '数据格式不正确，缺少经期历史记录' }
+      return { success: false, message: '数据格式不正确，缺少姨妈期历史记录' }
     }
 
     const currentHistory = getPeriodHistory()

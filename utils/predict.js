@@ -35,7 +35,7 @@ const getCycleStats = (history) => {
 }
 
 /**
- * 预测下一次经期
+ * 预测下一次姨妈期
  * @returns {{ startDate: string, endDate: string, daysUntil: number, isInPeriod: boolean, periodDay: number }}
  */
 const predictNext = () => {
@@ -43,7 +43,7 @@ const predictNext = () => {
   const settings = storage.getSettings()
   const today = util.today()
 
-  // 检查是否处于进行中的经期
+  // 检查是否处于进行中的姨妈期
   const active = storage.getActivePeriod()
   if (active) {
     const periodDay = util.diffDays(active.startDate, today) + 1
@@ -58,7 +58,7 @@ const predictNext = () => {
 
   // 没有历史记录，使用默认设置预测
   if (history.length === 0) {
-    // 从今天开始预测（用户尚未记录过任何经期，无法预测）
+    // 从今天开始预测（用户尚未记录过任何姨妈期，无法预测）
     return {
       isInPeriod: false,
       startDate: null,
@@ -68,7 +68,7 @@ const predictNext = () => {
     }
   }
 
-  // 取最后一次有效经期（排除 skipped）
+  // 取最后一次有效姨妈期（排除 skipped）
   const validHistory = history.filter(p => !p.skipped)
   if (validHistory.length === 0) {
     return { isInPeriod: false, startDate: null, endDate: null, daysUntil: null, needFirstRecord: true }
@@ -105,7 +105,7 @@ const predictNext = () => {
   // 计算距离预测日期的天数
   const daysUntil = util.diffDays(today, predictedStartStr)
 
-  // 如果预测开始日期已过，且不在经期中，说明可能已延迟
+  // 如果预测开始日期已过，且不在姨妈期中，说明可能已延迟
   if (predictedStartStr < today) {
     return {
       isInPeriod: false,

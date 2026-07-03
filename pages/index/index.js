@@ -57,7 +57,7 @@ Page({
     const status = predict.predictNext()
     const todayStr = util.today()
 
-    // 二次校验：直接从 storage 确认是否真的存在活跃经期，防止状态残留
+    // 二次校验：直接从 storage 确认是否真的存在活跃姨妈期，防止状态残留
     const active = storage.getActivePeriod()
     const actuallyInPeriod = !!active
 
@@ -137,7 +137,7 @@ Page({
         wx.showToast({ title: result.message || '操作失败', icon: 'none' })
         return
       }
-      wx.showToast({ title: '本次经期已结束', icon: 'none', duration: 2000 })
+      wx.showToast({ title: '本次姨妈期已结束', icon: 'none', duration: 2000 })
     }
 
     this.closeTagsPopup()
